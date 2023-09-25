@@ -4,7 +4,8 @@ from keyboards import get_device_category_keyboard
 from loader import router_for_catalog, db
 from aiogram.filters import Command
 from aiogram import types
-from aiogram import Router, F
+from aiogram import F
+
 
 @router_for_catalog.message(Command("catalog"))
 async def get_device_category(message: types.Message):
@@ -26,6 +27,16 @@ async def get_device_category(message: types.Message):
 
 @router_for_catalog.callback_query(F.data == "Ноутбуки")
 async def checkin_confirm(callback: CallbackQuery):
+    print(callback)
+    await callback.answer(
+        "Спасибо, подтверждено!",
+        show_alert=True
+    )
+
+
+@router_for_catalog.callback_query()
+async def checkin_confirm(callback: CallbackQuery):
+    print(callback)
     await callback.answer(
         "Спасибо, подтверждено!",
         show_alert=True
