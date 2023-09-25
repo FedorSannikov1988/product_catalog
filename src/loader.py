@@ -1,4 +1,6 @@
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Dispatcher, Router, Bot
+from middlewares import GetDeviceCategory
 from aiogram.enums import ParseMode
 from db_api import Database_async
 from config import TOKEN_BOT
@@ -7,14 +9,15 @@ from pathlib import Path
 import aiosqlite
 import asyncio
 
-
 bot = Bot(token=TOKEN_BOT, parse_mode=ParseMode.HTML)
-dp = Dispatcher()
+dp = Dispatcher(storage=MemoryStorage())
 router_for_start_action = Router()
 router_for_catalog = Router()
+
+#router_for_catalog.message.middleware(GetDeviceCategory())
+
 db_path = Path('db_api', 'database', 'shop_database.db')
 db = Database_async(db_path=db_path)
-
 
 logger.add('logs/logs.json',
            level='DEBUG',

@@ -2,13 +2,13 @@ from aiogram.types import InlineKeyboardMarkup, \
                           InlineKeyboardButton
 
 
-def get_device_category_keyboard():
-    buttons = [
-        [
-            InlineKeyboardButton(text="↠", callback_data="num_decr"),
-            InlineKeyboardButton(text="+1", callback_data="num_incr")
-        ],
-        [InlineKeyboardButton(text="Подтвердить", callback_data="num_finish")]
-    ]
+def get_device_category_keyboard(names_for_buttons: list[str]):
+    buttons = []
+
+    for name_one_button in names_for_buttons:
+        button = InlineKeyboardButton(text=name_one_button,
+                                      callback_data=name_one_button)
+        buttons.append([button])
+
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
