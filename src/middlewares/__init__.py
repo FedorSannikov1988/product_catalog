@@ -1,1 +1,2 @@
-from .databese_middlewares import GetDeviceCategory
+from .databese_middlewares import GetDeviceCategory, \
+                                  GetDeviceManufacturer

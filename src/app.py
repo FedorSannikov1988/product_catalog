@@ -1,5 +1,4 @@
-from handlers import router_for_start_action, \
-                     router_for_catalog
+from handlers import router_for_start_action, router_for_catalog
 from loader import bot, dp
 import asyncio
 

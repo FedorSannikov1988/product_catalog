@@ -64,6 +64,11 @@ class Database_async:
         sql = 'SELECT * FROM Device_category'
         return await self.execute(sql, fetchall=True)
 
+    async def info_about_devices(self, **kwargs):
+        sql = 'SELECT * FROM Devices WHERE '
+        sql, parameters = self.format_args(sql, kwargs)
+        return await self.execute(sql, parameters, fetchall=True)
+
     @staticmethod
     def format_args(sql, parameters: dict) -> tuple:
         sql += ' AND '.join([

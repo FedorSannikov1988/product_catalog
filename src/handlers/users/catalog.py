@@ -1,58 +1,58 @@
+from keyboards import get_device_category_keyboard, \
+                      get_manufacturers_keyboard, \
+                      SelectDeviceCategory, \
+                      SelectManufacturers
+from middlewares import GetDeviceManufacturer, \
+                        GetDeviceCategory
+from loader import router_for_catalog, bot
 from aiogram.types import CallbackQuery
-
-from keyboards import get_device_category_keyboard, SelectDeviceCategory
-
-from loader import router_for_catalog, db
 from aiogram.filters import Command
 from aiogram import types
-from aiogram import F
+
+
+router_for_catalog.message.middleware(GetDeviceCategory())
+router_for_catalog.callback_query.middleware(GetDeviceManufacturer())
 
 
 @router_for_catalog.message(Command("catalog"))
-async def get_device_category(message: types.Message):
-
-    all_device_category = await db.info_all_device_category()
-
-    names_for_buttons = []
-    for one_category in all_device_category:
-        names_for_buttons.append(one_category[1])
-
+async def get_device_category(message: types.Message,
+                              all_device_category: list):
 
     text: str = 'Выберите категорию устройства: \n '
 
     await message.answer(text=text,
                          reply_markup=
                          get_device_category_keyboard(names_for_buttons=
-                                                      names_for_buttons))
+                                                      all_device_category))
 
 
 @router_for_catalog.callback_query(SelectDeviceCategory.filter())
-async def check(callback: CallbackQuery,
-                callback_data: SelectDeviceCategory):
-    print("-----")
-    print(callback_data.device_category)
-    print("-----")
-    print(callback)
-    print("-----")
-    await callback.answer(
-        "Работает",
-        show_alert=True
-    )
+async def get_manufacturers(callback: CallbackQuery,
+                            callback_data: SelectDeviceCategory,
+                            manufacturers: list):
 
+    if not manufacturers:
+        await callback.answer(
+            text="На данный момент устройств этой категории нет на складе",
+            show_alert=False
+        )
+    else:
+        chat_id = callback.message.chat.id
+        message_id = callback.message.message_id
+        device_category = callback_data.device_category
 
-#@router_for_catalog.callback_query(F.data == "Ноутбуки")
-#async def checkin_confirm(callback: CallbackQuery):
-#    print(callback)
-#    await callback.answer(
-#        "Спасибо, подтверждено!",
-#        show_alert=True
-#    )
+        print('Категория:')
+        print(callback_data.device_category)
 
+        text: str = 'Выберите производителя устройства: \n'
 
-#@router_for_catalog.callback_query()
-#async def checkin_confirm(callback: CallbackQuery):
-#    print(callback)
-#    await callback.answer(
-#        "Спасибо, подтверждено!",
-#        show_alert=True
-#    )
+        await bot.edit_message_text(text=text,
+                                    chat_id=chat_id,
+                                    message_id=message_id,
+                                    reply_markup=
+                                    get_manufacturers_keyboard(
+                                        device_category=
+                                        device_category,
+                                        names_for_buttons=
+                                        manufacturers))
+
