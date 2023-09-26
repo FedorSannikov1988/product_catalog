@@ -1,1 +1,1 @@
-from .inlines import get_device_category_keyboard
+from .inlines import get_device_category_keyboard, SelectDeviceCategory

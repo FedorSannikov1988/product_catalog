@@ -1,6 +1,7 @@
 from aiogram.types import CallbackQuery
 
-from keyboards import get_device_category_keyboard
+from keyboards import get_device_category_keyboard, SelectDeviceCategory
+
 from loader import router_for_catalog, db
 from aiogram.filters import Command
 from aiogram import types
@@ -25,19 +26,33 @@ async def get_device_category(message: types.Message):
                                                       names_for_buttons))
 
 
-@router_for_catalog.callback_query(F.data == "Ноутбуки")
-async def checkin_confirm(callback: CallbackQuery):
+@router_for_catalog.callback_query(SelectDeviceCategory.filter())
+async def check(callback: CallbackQuery,
+                callback_data: SelectDeviceCategory):
+    print("-----")
+    print(callback_data.device_category)
+    print("-----")
     print(callback)
+    print("-----")
     await callback.answer(
-        "Спасибо, подтверждено!",
+        "Работает",
         show_alert=True
     )
 
 
-@router_for_catalog.callback_query()
-async def checkin_confirm(callback: CallbackQuery):
-    print(callback)
-    await callback.answer(
-        "Спасибо, подтверждено!",
-        show_alert=True
-    )
+#@router_for_catalog.callback_query(F.data == "Ноутбуки")
+#async def checkin_confirm(callback: CallbackQuery):
+#    print(callback)
+#    await callback.answer(
+#        "Спасибо, подтверждено!",
+#        show_alert=True
+#    )
+
+
+#@router_for_catalog.callback_query()
+#async def checkin_confirm(callback: CallbackQuery):
+#    print(callback)
+#    await callback.answer(
+#        "Спасибо, подтверждено!",
+#        show_alert=True
+#    )
