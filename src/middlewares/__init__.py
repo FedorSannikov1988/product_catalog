@@ -1,4 +1,4 @@
-from .databese_middlewares import GetDevicesName, \
-                                  GetDeviceCategoryStart, \
+from .databese_middlewares import GetDeviceCategoryStart, \
                                   GetDeviceManufacturer, \
-                                  GetDeviceCategoryBack
+                                  GetDeviceCategoryBack,\
+                                  GetDevicesNamesAndDevices
