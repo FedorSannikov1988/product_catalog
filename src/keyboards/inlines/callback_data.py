@@ -40,12 +40,20 @@ class SelectNameDevices(CallbackData,
     name_device: str
 
 
-class GalleryDevices(CallbackData,
-                     prefix="gallery_devices"):
-    names_devices: str
-
-
 class BackGetManufacturersFromGalleryDevices(CallbackData,
                                              prefix=
                                              "back_gallery_devices"):
     pass
+
+
+class GetGalleryDevices(CallbackData,
+                        prefix="gallery_devices"):
+    names_devices: str
+
+
+class ActionGalleryDevices(CallbackData,
+                           prefix="action_gallery_devices"):
+    turn: str
+    all_names_devices: str
+    see_name_device: str
+    pin_message: str

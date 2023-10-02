@@ -1,12 +1,12 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from .callback_data import BackGetNameInformationPictureDevices, \
-                           BackGetManufacturers, \
-                           BackGetNameDevices, \
-                           SelectDeviceCategory, \
-                           SelectManufacturers, \
-                           SelectNameDevices, \
-                           ForDeleteMesage, \
-                           GalleryDevices, BackGetManufacturersFromGalleryDevices
+    BackGetManufacturers, \
+    BackGetNameDevices, \
+    SelectDeviceCategory, \
+    SelectManufacturers, \
+    SelectNameDevices, \
+    ForDeleteMesage, \
+    GetGalleryDevices, BackGetManufacturersFromGalleryDevices, ActionGalleryDevices
 
 
 def get_device_category_keyboard(names_for_buttons: list[str]):
@@ -81,7 +81,7 @@ def get_name_devices_keyboard(manufacturer: str,
     builder.button(
         text='Все устройства',
         callback_data=
-        GalleryDevices(names_devices=
+        GetGalleryDevices(names_devices=
                        ';'.join(names_for_buttons))
     )
 
@@ -120,8 +120,7 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
     builder.button(
         text='Все устройства',
         callback_data=
-        GalleryDevices(names_devices=
-                       ';'.join(names_for_buttons))
+        GetGalleryDevices(names_devices=';'.join(names_for_buttons))
     )
 
     builder.adjust(2)
@@ -138,30 +137,43 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
     return builder.as_markup()
 
 
-def for_gallery_devices():
+def for_gallery_devices(selected_devices: str, all_names_devices: list[str]):
 
     line_one = InlineKeyboardBuilder()
     line_two = InlineKeyboardBuilder()
 
     line_one.button(
         text='←',
-        callback_data='+'
+        callback_data=
+        ActionGalleryDevices(turn='left',
+                             pin_message='',
+                             all_names_devices=';'.join(all_names_devices),
+                             see_name_device=selected_devices)
     )
 
     line_one.button(
         text='Закрепить',
-        callback_data='+'
+        callback_data=
+        ActionGalleryDevices(turn='',
+                             pin_message='pin it',
+                             all_names_devices=';'.join(all_names_devices),
+                             see_name_device=selected_devices)
     )
 
     line_one.button(
         text='→',
-        callback_data='+'
+        callback_data=
+        ActionGalleryDevices(turn='right',
+                             pin_message='',
+                             all_names_devices=';'.join(all_names_devices),
+                             see_name_device=selected_devices)
     )
     line_one.adjust(3)
 
     line_two.button(
         text='В каталог',
-        callback_data=BackGetManufacturersFromGalleryDevices()
+        callback_data=
+        BackGetManufacturersFromGalleryDevices()
     )
 
     line_two.button(

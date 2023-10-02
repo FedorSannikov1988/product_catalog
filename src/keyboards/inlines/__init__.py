@@ -7,5 +7,5 @@ from .user_keyboards import get_name_information_picture_devices_keyboard, \
                             SelectDeviceCategory, \
                             SelectManufacturers, \
                             SelectNameDevices, \
-                            ForDeleteMesage, BackGetNameInformationPictureDevices, GalleryDevices, for_gallery_devices, \
-                            BackGetManufacturersFromGalleryDevices
+                            ForDeleteMesage, BackGetNameInformationPictureDevices, GetGalleryDevices, for_gallery_devices, \
+                            BackGetManufacturersFromGalleryDevices, ActionGalleryDevices

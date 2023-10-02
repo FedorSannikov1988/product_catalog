@@ -8,4 +8,5 @@ from .inlines import get_name_information_picture_devices_keyboard, \
                      SelectDeviceCategory, \
                      SelectManufacturers, \
                      SelectNameDevices, \
-                     ForDeleteMesage, GalleryDevices, for_gallery_devices, BackGetManufacturersFromGalleryDevices
+                     ForDeleteMesage, GetGalleryDevices, for_gallery_devices, BackGetManufacturersFromGalleryDevices, \
+                     ActionGalleryDevices
