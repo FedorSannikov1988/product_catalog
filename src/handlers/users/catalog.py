@@ -1,3 +1,5 @@
+from aiogram.utils.markdown import hbold
+
 from keyboards import BackGetNameDevices, \
     get_name_information_picture_devices_keyboard, \
     get_device_category_keyboard, \
@@ -160,6 +162,7 @@ async def get_name_information_picture_devices(callback: CallbackQuery,
     manufacturer = callback_data.manufacturer
     device_category = callback_data.device_category
 
+
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -175,17 +178,17 @@ async def get_name_information_picture_devices(callback: CallbackQuery,
 
     for one_device in devices:
         inform_about_name_device += \
-            '\n' + \
-            'Характеристики:\n' + one_device[4] + '\n' + \
+            '\n' + one_device[4] + '\n' + \
             'Цена: ' + str(one_device[5]) + '\n' + \
             'Количество: ' + str(one_device[6]) + '\n\n'
         photo = FSInputFile(path=one_device[7])
 
-    text: str = 'Выберите модель устройства: \n'
+    text: str = \
+        f'Модель устройства: {hbold(names_devices[0])}\n\n' + 'Характеристики и цена:\n'
 
     await bot.send_photo(chat_id=chat_id,
                          photo=photo,
-                         caption=inform_about_name_device + text,
+                         caption=text + inform_about_name_device,
                          reply_markup=
                          get_name_information_picture_devices_keyboard(
                              manufacturer=manufacturer,
@@ -200,28 +203,39 @@ async def get_gallery_devices(callback: CallbackQuery,
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
-    names_devices = callback_data.names_devices.split(';')
 
-    devices = await db.info_about_devices(name_device=
-                                          names_devices[0])
+    manufacturer = callback_data.manufacturer
+    device_category = callback_data.device_category
 
-    text: str = 'Характеристики и цена: \n'
+    devices = await db.info_about_devices(name_category=device_category,
+                                          name_manufacturer=manufacturer)
+
+    names_devices = list()
+
+    for one_device in devices:
+        names_devices.append(one_device[3])
+
+    names_devices = list(set(names_devices))
+
+    text: str = \
+        f'Модель устройства: {hbold(names_devices[0])}\n\n' + 'Характеристики и цена:\n'
 
     photo = FSInputFile(path='')
     inform_about_name_device: str = ''
 
+    # отсортировать по имени !!!
+
     for one_device in devices:
         inform_about_name_device += \
-            '\n' + \
-            'Характеристики:\n' + one_device[4] + '\n' + \
+            '\n' + one_device[4] + '\n' + \
             'Цена: ' + str(one_device[5]) + '\n' + \
             'Количество: ' + str(one_device[6]) + '\n\n'
         photo = FSInputFile(path=one_device[7])
 
     inform_about_name_device += \
-        '{word_str:>35} {number_str}/{all_str} '.format(word_str='страница',
-                                                        number_str=1,
-                                                        all_str=len(names_devices))
+        '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
+                                                       number_str=1,
+                                                       all_str=len(names_devices))
 
     data_from_previous_message = await state.get_data()
     search_data_from_previous_message: str = 'needs be deleted this message'
@@ -234,7 +248,8 @@ async def get_gallery_devices(callback: CallbackQuery,
             'chat_id': chat_id,
             'message_id': message_id,
             'reply_markup': for_gallery_devices(selected_devices=names_devices[0],
-                                                all_names_devices=names_devices)
+                                                manufacturer=manufacturer,
+                                                device_category=device_category)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
@@ -245,22 +260,39 @@ async def get_gallery_devices(callback: CallbackQuery,
                              photo=photo,
                              caption=
                              text + inform_about_name_device,
-                             reply_markup=for_gallery_devices(selected_devices=names_devices[0],
-                                                              all_names_devices=names_devices))
+                             reply_markup=
+                             for_gallery_devices(selected_devices=names_devices[0],
+                                                 manufacturer=manufacturer,
+                                                 device_category=device_category))
 
 
 @router_for_catalog.callback_query(ActionGalleryDevices.filter(F.turn == "left"))
-async def get_gallery_devices(callback: CallbackQuery,
-                              callback_data: ActionGalleryDevices):
+async def action_left_gallery_devices(callback: CallbackQuery,
+                                      callback_data: ActionGalleryDevices):
+
+    print("left")
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
+
+    manufacturer = callback_data.manufacturer
+    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
-    names_devices = callback_data.all_names_devices.split(';')
+
+    devices = await db.info_about_devices(name_manufacturer=manufacturer,
+                                          name_category=device_category)
+
+    names_devices = list()
+
+    for one_device in devices:
+        names_devices.append(one_device[3])
+
+    names_devices = list(set(names_devices))
 
     size_names_devices = len(names_devices)
     index_see_name_device = names_devices.index(see_name_device)
     index_new_name_device = index_see_name_device - 1
+
 
     if (size_names_devices > 1) and \
        (index_new_name_device >= 0):
@@ -268,23 +300,23 @@ async def get_gallery_devices(callback: CallbackQuery,
         new_name_device = names_devices[index_new_name_device]
         devices = await db.info_about_devices(name_device=new_name_device)
 
-        text: str = 'Характеристики и цена: \n'
+        text: str = \
+            f'Модель устройства: {hbold(new_name_device)}\n\n' + 'Характеристики и цена:\n'
 
         photo = FSInputFile(path='')
         inform_about_name_device: str = ''
 
         for one_device in devices:
             inform_about_name_device += \
-                '\n' + \
-                'Характеристики:\n' + one_device[4] + '\n' + \
+                '\n' + one_device[4] + '\n' + \
                 'Цена: ' + str(one_device[5]) + '\n' + \
                 'Количество: ' + str(one_device[6]) + '\n\n'
             photo = FSInputFile(path=one_device[7])
 
         inform_about_name_device += \
-            '{word_str:>35} {number_str}/{all_str} '.format(word_str='страница',
-                                                            number_str=index_new_name_device+1,
-                                                            all_str=len(names_devices))
+            '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
+                                                           number_str=index_new_name_device+1,
+                                                           all_str=size_names_devices)
 
         args_for_edit_message_media = {
             'media': InputMediaPhoto(media=photo,
@@ -293,19 +325,34 @@ async def get_gallery_devices(callback: CallbackQuery,
             'chat_id': chat_id,
             'message_id': message_id,
             'reply_markup': for_gallery_devices(selected_devices=new_name_device,
-                                                all_names_devices=names_devices)
+                                                manufacturer=manufacturer,
+                                                device_category=device_category)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
 
 @router_for_catalog.callback_query(ActionGalleryDevices.filter(F.turn == "right"))
-async def get_gallery_devices(callback: CallbackQuery,
-                              callback_data: ActionGalleryDevices):
+async def action_right_gallery_devices(callback: CallbackQuery,
+                                       callback_data: ActionGalleryDevices):
+
+    print("right")
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
+
+    manufacturer = callback_data.manufacturer
+    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
-    names_devices = callback_data.all_names_devices.split(';')
+
+    devices = await db.info_about_devices(name_manufacturer=manufacturer,
+                                          name_category=device_category)
+
+    names_devices = list()
+
+    for one_device in devices:
+        names_devices.append(one_device[3])
+
+    names_devices = list(set(names_devices))
 
     size_names_devices = len(names_devices)
     index_see_name_device = names_devices.index(see_name_device)
@@ -317,23 +364,23 @@ async def get_gallery_devices(callback: CallbackQuery,
         new_name_device = names_devices[index_new_name_device]
         devices = await db.info_about_devices(name_device=new_name_device)
 
-        text: str = 'Характеристики и цена: \n'
+        text: str = \
+            f'Модель устройства: {hbold(new_name_device)}\n\n' + 'Характеристики и цена:\n'
 
         photo = FSInputFile(path='')
         inform_about_name_device: str = ''
 
         for one_device in devices:
             inform_about_name_device += \
-                '\n' + \
-                'Характеристики:\n' + one_device[4] + '\n' + \
+                '\n' + one_device[4] + '\n' + \
                 'Цена: ' + str(one_device[5]) + '\n' + \
                 'Количество: ' + str(one_device[6]) + '\n\n'
             photo = FSInputFile(path=one_device[7])
 
         inform_about_name_device += \
-            '{word_str:>35} {number_str}/{all_str} '.format(word_str='страница',
-                                                            number_str=index_new_name_device+1,
-                                                            all_str=len(names_devices))
+            '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
+                                                           number_str=index_new_name_device+1,
+                                                           all_str=size_names_devices)
 
         args_for_edit_message_media = {
             'media': InputMediaPhoto(media=photo,
@@ -342,7 +389,8 @@ async def get_gallery_devices(callback: CallbackQuery,
             'chat_id': chat_id,
             'message_id': message_id,
             'reply_markup': for_gallery_devices(selected_devices=new_name_device,
-                                                all_names_devices=names_devices)
+                                                manufacturer=manufacturer,
+                                                device_category=device_category)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
@@ -352,8 +400,18 @@ async def get_gallery_devices(callback: CallbackQuery,
                               callback_data: ActionGalleryDevices):
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
+
+    manufacturer = callback_data.manufacturer
+    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
-    names_devices = callback_data.all_names_devices.split(';')
+
+    devices = await db.info_about_devices(name_manufacturer=manufacturer,
+                                          name_category=device_category)
+
+    names_devices = list()
+
+    for one_device in devices:
+        names_devices.append(one_device[3])
 
     size_names_devices = len(names_devices)
     index_see_name_device = names_devices.index(see_name_device)
@@ -377,7 +435,7 @@ async def get_gallery_devices(callback: CallbackQuery,
     inform_about_name_device += \
         '{word_str:>35} {number_str}/{all_str} '.format(word_str='страница',
                                                         number_str=index_new_name_device,
-                                                        all_str=size_names_devices)
+                                                        all_str=size_names_devices-1)
 
     await bot.copy_message(chat_id=chat_id, message_id=message_id, from_chat_id=chat_id)
 
@@ -389,6 +447,7 @@ async def get_gallery_devices(callback: CallbackQuery,
                          text + inform_about_name_device,
                          reply_markup=
                          for_gallery_devices(
-                             selected_devices=names_devices[0],
-                             all_names_devices=names_devices))
+                             selected_devices=see_name_device,
+                             manufacturer=manufacturer,
+                             device_category=device_category))
 

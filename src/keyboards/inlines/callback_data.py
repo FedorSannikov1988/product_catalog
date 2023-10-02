@@ -48,12 +48,14 @@ class BackGetManufacturersFromGalleryDevices(CallbackData,
 
 class GetGalleryDevices(CallbackData,
                         prefix="gallery_devices"):
-    names_devices: str
+    manufacturer: str
+    device_category: str
 
 
 class ActionGalleryDevices(CallbackData,
                            prefix="action_gallery_devices"):
     turn: str
-    all_names_devices: str
+    manufacturer: str
+    device_category: str
     see_name_device: str
     pin_message: str

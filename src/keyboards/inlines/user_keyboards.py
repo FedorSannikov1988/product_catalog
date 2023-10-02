@@ -81,8 +81,8 @@ def get_name_devices_keyboard(manufacturer: str,
     builder.button(
         text='Все устройства',
         callback_data=
-        GetGalleryDevices(names_devices=
-                       ';'.join(names_for_buttons))
+        GetGalleryDevices(manufacturer=manufacturer,
+                          device_category=device_category)
     )
 
     builder.adjust(2)
@@ -120,7 +120,8 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
     builder.button(
         text='Все устройства',
         callback_data=
-        GetGalleryDevices(names_devices=';'.join(names_for_buttons))
+        GetGalleryDevices(manufacturer=manufacturer,
+                          device_category=device_category)
     )
 
     builder.adjust(2)
@@ -137,7 +138,7 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
     return builder.as_markup()
 
 
-def for_gallery_devices(selected_devices: str, all_names_devices: list[str]):
+def for_gallery_devices(selected_devices: str, device_category: str, manufacturer: str):
 
     line_one = InlineKeyboardBuilder()
     line_two = InlineKeyboardBuilder()
@@ -147,7 +148,8 @@ def for_gallery_devices(selected_devices: str, all_names_devices: list[str]):
         callback_data=
         ActionGalleryDevices(turn='left',
                              pin_message='',
-                             all_names_devices=';'.join(all_names_devices),
+                             manufacturer=manufacturer,
+                             device_category=device_category,
                              see_name_device=selected_devices)
     )
 
@@ -156,7 +158,8 @@ def for_gallery_devices(selected_devices: str, all_names_devices: list[str]):
         callback_data=
         ActionGalleryDevices(turn='',
                              pin_message='pin it',
-                             all_names_devices=';'.join(all_names_devices),
+                             manufacturer=manufacturer,
+                             device_category=device_category,
                              see_name_device=selected_devices)
     )
 
@@ -165,7 +168,8 @@ def for_gallery_devices(selected_devices: str, all_names_devices: list[str]):
         callback_data=
         ActionGalleryDevices(turn='right',
                              pin_message='',
-                             all_names_devices=';'.join(all_names_devices),
+                             manufacturer=manufacturer,
+                             device_category=device_category,
                              see_name_device=selected_devices)
     )
     line_one.adjust(3)
