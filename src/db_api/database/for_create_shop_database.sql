@@ -73,12 +73,10 @@ CREATE TABLE IF NOT EXISTS Devices
 INSERT INTO Devices 
 (name_category, name_manufacturer, name_device, article_device, description_device, price_device, quantity_device, photo_path) 
 VALUES 
--- ("Ноутбуки", "Xiaomi", "Название1", 100000, "Параметры1", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
+("Ноутбуки", "Xiaomi", "Название1", 100000, "Параметры1", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
 ("Ноутбуки", "Xiaomi Redmi", "Название2", 100001, "Параметры2", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
 ("Ноутбуки", "Lenovo Legion", "Название3", 100002, "Параметры3", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
 ("Ноутбуки", "Lenovo Legion 2023", "Название4", 100003, "Параметры4", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
 ("Ноутбуки", "Lenovo GeekPro", "Название5", 100004, "Параметры5", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg"),
 ("Ноутбуки", "Lenovo", "Название6", 100005, "Параметры6", 1, 0, "db_api/database/product_photo/Xiaomi_Book_Pro_14_2022_OLED.jpg")
 ;
-
--- SELECT * FROM Device_category;

@@ -41,15 +41,14 @@ class SelectNameDevices(CallbackData,
 
 
 class BackGetManufacturersFromGalleryDevices(CallbackData,
-                                             prefix=
-                                             "back_gallery_devices"):
+                                             prefix="back_gallery_devices"):
     pass
 
 
 class GetGalleryDevices(CallbackData,
-                        prefix="gallery_devices"):
-    manufacturer: str
+                        prefix="start_gallery_devices"):
     device_category: str
+    manufacturer: str
 
 
 class ActionGalleryDevices(CallbackData,

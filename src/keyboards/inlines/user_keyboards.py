@@ -1,12 +1,14 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from .callback_data import BackGetNameInformationPictureDevices, \
-    BackGetManufacturers, \
-    BackGetNameDevices, \
-    SelectDeviceCategory, \
-    SelectManufacturers, \
-    SelectNameDevices, \
-    ForDeleteMesage, \
-    GetGalleryDevices, BackGetManufacturersFromGalleryDevices, ActionGalleryDevices
+from .callback_data import BackGetManufacturersFromGalleryDevices, \
+                           BackGetNameInformationPictureDevices, \
+                           BackGetManufacturers, \
+                           BackGetNameDevices, \
+                           SelectDeviceCategory, \
+                           SelectManufacturers, \
+                           SelectNameDevices, \
+                           ForDeleteMesage, \
+                           GetGalleryDevices, \
+                           ActionGalleryDevices
 
 
 def get_device_category_keyboard(names_for_buttons: list[str]):

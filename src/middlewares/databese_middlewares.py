@@ -139,7 +139,7 @@ class GetDevicesNamesAndDevices(BaseMiddleware):
         return await handler(event, data)
 
 
-class GetDevices(BaseMiddleware):
+class StartGalleryDevices(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
@@ -147,10 +147,56 @@ class GetDevices(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
 
-        search_callback_one: str = 'gallery_devices:'
+        search_callback_one: str = 'start_gallery_devices:'
 
         if search_callback_one in event.data:
-            prefix_and_names_devices = event.data.split(':')
-            names_devices = prefix_and_names_devices[1].split(';')
+            manufacturer_and_device_category = event.data.split(':')
+            device_category = manufacturer_and_device_category[1]
+            manufacturer = manufacturer_and_device_category[2]
+
+            devices = await db.info_about_devices(name_category=
+                                                  device_category,
+                                                  name_manufacturer=
+                                                  manufacturer)
+
+            names_devices = list()
+
+            for one_device in devices:
+                names_devices.append(one_device[3])
+
+            names_devices = list(set(names_devices))
+
+            names_devices.sort()
+
+            device_for_start_gallery = list()
+
+            for one_device in devices:
+                if names_devices[0] == one_device[3]:
+                    device_for_start_gallery.append(one_device)
+
+            data['number_pages'] = len(names_devices)
+            data['device_for_start_gallery'] = device_for_start_gallery
+
+        return await handler(event, data)
+
+
+class ActionRightLeftGalleryDevices(BaseMiddleware):
+    async def __call__(
+        self,
+        handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
+        event: CallbackQuery,
+        data: Dict[str, Any]
+    ) -> Any:
+
+        search_callback_one: str = 'action_gallery_devices:'
+
+        if search_callback_one in event.data:
+            device_category_manufacturer_see_name_device = event.data.split(':')
+            manufacturer = device_category_manufacturer_see_name_device[2]
+            device_category = device_category_manufacturer_see_name_device[3]
+
+            devices_for_action = await db.info_about_devices(name_category=device_category,
+                                                             name_manufacturer=manufacturer)
+            data['devices_for_action'] = devices_for_action
 
         return await handler(event, data)
