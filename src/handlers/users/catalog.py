@@ -4,14 +4,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hbold
 from aiogram.filters import Command
 from aiogram import types, F
-
-from middlewares import GetDeviceCategoryStart, \
-                        GetDeviceManufacturer, \
-                        GetDeviceCategoryBack, \
-                        GetDevicesNamesAndDevices, \
-                        StartGalleryDevices, \
-                        ActionRightLeftGalleryDevices
-
 from keyboards import get_name_information_picture_devices_keyboard, \
                       get_device_category_keyboard, \
                       get_manufacturers_keyboard, \
@@ -27,14 +19,6 @@ from keyboards import get_name_information_picture_devices_keyboard, \
                       BackGetManufacturersFromGalleryDevices, \
                       GetGalleryDevices,  \
                       ActionGalleryDevices
-
-
-router_for_catalog.message.middleware(GetDeviceCategoryStart())
-router_for_catalog.callback_query.middleware(GetDeviceCategoryBack())
-router_for_catalog.callback_query.middleware(GetDeviceManufacturer())
-router_for_catalog.callback_query.middleware(GetDevicesNamesAndDevices())
-router_for_catalog.callback_query.middleware(StartGalleryDevices())
-router_for_catalog.callback_query.middleware(ActionRightLeftGalleryDevices())
 
 
 @router_for_catalog.message(Command("catalog"))
