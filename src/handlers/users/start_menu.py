@@ -19,7 +19,7 @@ async def start_work_bot(message: types.Message):
                 f'Меню бота: \n\n' \
                 f'/start - Начало работы;\n' \
                 f'/catalog - Просмотр каталога товаров;\n' \
-                f'/help - Список комманд доступных пользователю;\n'\
+                f'/help - Список комманд доступных пользователю.\n'\
                 f'\n\n'
     await message.answer(text=text)
 
