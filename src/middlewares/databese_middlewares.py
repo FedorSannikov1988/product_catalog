@@ -62,8 +62,8 @@ class GetDeviceManufacturer(BaseMiddleware):
     ) -> Any:
 
         search_callback_one: str = 'device_category:'
-        search_callback_two: str = 'back_get_devices_name:'
-        search_callback_three: str = 'back_get_devices_picture_information_name:'
+        search_callback_two: str = 'back_name_devices:'
+        search_callback_three: str = 'back_devices_name_and_picture:'
 
         if (search_callback_one in event.data) or \
            (search_callback_two in event.data) or \
@@ -90,7 +90,7 @@ class GetDeviceManufacturer(BaseMiddleware):
         return await handler(event, data)
 
 
-class GetDevicesNamesAndDevices(BaseMiddleware):
+class GetDevicesNames(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
@@ -99,42 +99,62 @@ class GetDevicesNamesAndDevices(BaseMiddleware):
     ) -> Any:
 
         search_callback_one: str = 'manufacturers:'
-        search_callback_two: str = 'name_devices:'
 
-        if (search_callback_one in event.data) or \
-           (search_callback_two in event.data):
+        if search_callback_one in event.data:
 
-            category_and_manufacturer = event.data.split(':')
-            manufacturer = category_and_manufacturer[2]
-            category = category_and_manufacturer[1]
+            fsm_state: dict = await data['state'].get_data()
 
-            # для get_name_information_picture_devices
-            if (search_callback_two in event.data) and \
-               len(category_and_manufacturer) == 4:
-
-                name_device = category_and_manufacturer[3]
-                data['devices'] = await db.info_about_devices(name_device=
-                                                              name_device)
+            prefix_and_manufacturer = event.data.split(':')
+            manufacturer = prefix_and_manufacturer[1]
+            category = fsm_state['device_category']
 
             devices_from_db = \
                 await db.info_about_devices(name_category=category,
                                             name_manufacturer=manufacturer)
-            if devices_from_db:
 
-                names_devices: list = []
+            names_devices: list = []
 
-                for one_device in devices_from_db:
-                    names_devices.append(one_device[3])
+            for one_device in devices_from_db:
+                names_devices.append(one_device[3])
 
-                data['names_devices'] = list(set(names_devices))
+            data['names_devices'] = list(set(names_devices))
 
-            else:
-                data['names_devices'] = list()
+        return await handler(event, data)
 
-        #if search_callback_two in event.data:
-        #    for_name_device = event.data.split(':')
-        #    name_device = for_name_device[3]
-        #    data['devices'] = await db.info_about_devices(name_device=name_device)
+
+class GetDevicesNamesAndDevice(BaseMiddleware):
+    async def __call__(
+        self,
+        handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
+        event: CallbackQuery,
+        data: Dict[str, Any]
+    ) -> Any:
+
+        search_callback_one: str = 'name_device:'
+
+        if search_callback_one in event.data:
+
+            prefix_and_name_device = event.data.split(':')
+            name_device = prefix_and_name_device[1]
+
+            fsm_state: dict = await data['state'].get_data()
+            category = fsm_state['device_category']
+            manufacturer = fsm_state['manufacturer']
+
+            devices_from_db = \
+                await db.info_about_devices(name_category=category,
+                                            name_manufacturer=manufacturer)
+
+            devices: list = []
+            names_devices: list = []
+
+            for one_device in devices_from_db:
+                names_devices.append(one_device[3])
+                if name_device == one_device[3]:
+                    devices.append(one_device)
+
+            data['names_devices'] = list(set(names_devices))
+            data['devices'] = devices
 
         return await handler(event, data)
 
@@ -147,17 +167,16 @@ class StartGalleryDevices(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
 
-        search_callback_one: str = 'start_gallery_devices:'
+        search_callback_one: str = 'start_gallery_devices'
 
         if search_callback_one in event.data:
-            manufacturer_and_device_category = event.data.split(':')
-            device_category = manufacturer_and_device_category[1]
-            manufacturer = manufacturer_and_device_category[2]
+            fsm_state: dict = await data['state'].get_data()
+            category = fsm_state['device_category']
+            manufacturer = fsm_state['manufacturer']
 
-            devices = await db.info_about_devices(name_category=
-                                                  device_category,
-                                                  name_manufacturer=
-                                                  manufacturer)
+            devices = \
+                await db.info_about_devices(name_category=category,
+                                            name_manufacturer=manufacturer)
 
             names_devices = list()
 
@@ -191,11 +210,11 @@ class ActionRightLeftGalleryDevices(BaseMiddleware):
         search_callback_one: str = 'action_gallery_devices:'
 
         if search_callback_one in event.data:
-            device_category_manufacturer_see_name_device = event.data.split(':')
-            manufacturer = device_category_manufacturer_see_name_device[2]
-            device_category = device_category_manufacturer_see_name_device[3]
+            fsm_state: dict = await data['state'].get_data()
+            category = fsm_state['device_category']
+            manufacturer = fsm_state['manufacturer']
 
-            devices_for_action = await db.info_about_devices(name_category=device_category,
+            devices_for_action = await db.info_about_devices(name_category=category,
                                                              name_manufacturer=manufacturer)
             data['devices_for_action'] = devices_for_action
 

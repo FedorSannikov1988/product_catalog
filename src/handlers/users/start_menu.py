@@ -1,4 +1,5 @@
 from aiogram.utils.markdown import hunderline, hlink, hbold
+from aiogram.fsm.context import FSMContext
 from loader import router_for_start_action
 from answers import all_answer_for_user
 from aiogram.filters import Command
@@ -6,7 +7,10 @@ from aiogram import types
 
 
 @router_for_start_action.message(Command("start"))
-async def start_work_bot(message: types.Message):
+async def start_work_bot(message: types.Message,
+                         state: FSMContext):
+    await state.clear()
+
     text: str = f'Здраствуйте, ' \
                 f'{hbold(message.from_user.first_name)}! '\
                 f'Это {hunderline("ПЕДПРОЕКТ")} !\n'\

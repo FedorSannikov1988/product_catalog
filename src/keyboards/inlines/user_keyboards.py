@@ -37,8 +37,7 @@ def get_device_category_keyboard(names_for_buttons: list[str]):
     return builder.as_markup()
 
 
-def get_manufacturers_keyboard(device_category: str,
-                               names_for_buttons: list[str]):
+def get_manufacturers_keyboard(names_for_buttons: list[str]):
     builder = InlineKeyboardBuilder()
     builder_for_back = InlineKeyboardBuilder()
 
@@ -46,8 +45,8 @@ def get_manufacturers_keyboard(device_category: str,
         builder.button(
             text=name_one_button,
             callback_data=
-            SelectManufacturers(device_category=device_category,
-                                manufacturer=name_one_button)
+            SelectManufacturers(manufacturer=
+                                name_one_button)
         )
 
     builder.adjust(2)
@@ -63,9 +62,7 @@ def get_manufacturers_keyboard(device_category: str,
     return builder.as_markup()
 
 
-def get_name_devices_keyboard(manufacturer: str,
-                              device_category: str,
-                              names_for_buttons: list[str]):
+def get_name_devices_keyboard(device_category: str, names_for_buttons: list[str]):
     builder = InlineKeyboardBuilder()
     builder_for_back = InlineKeyboardBuilder()
 
@@ -73,18 +70,13 @@ def get_name_devices_keyboard(manufacturer: str,
         builder.button(
             text=name_one_button,
             callback_data=
-            SelectNameDevices(device_category=
-                              device_category,
-                              manufacturer=
-                              manufacturer,
-                              name_device=
-                              name_one_button))
+            SelectNameDevices(name_device=
+                              name_one_button)
+        )
 
     builder.button(
         text='Все устройства',
-        callback_data=
-        GetGalleryDevices(manufacturer=manufacturer,
-                          device_category=device_category)
+        callback_data=GetGalleryDevices()
     )
 
     builder.adjust(2)
@@ -101,9 +93,9 @@ def get_name_devices_keyboard(manufacturer: str,
     return builder.as_markup()
 
 
-def get_name_information_picture_devices_keyboard(manufacturer: str,
-                                                  device_category: str,
+def get_name_information_picture_devices_keyboard(device_category: str,
                                                   names_for_buttons: list[str]):
+
     builder = InlineKeyboardBuilder()
     builder_for_back = InlineKeyboardBuilder()
 
@@ -111,19 +103,14 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
         builder.button(
             text=name_one_button,
             callback_data=
-            SelectNameDevices(device_category=
-                              device_category,
-                              manufacturer=
-                              manufacturer,
-                              name_device=
+            SelectNameDevices(name_device=
                               name_one_button)
         )
 
     builder.button(
         text='Все устройства',
         callback_data=
-        GetGalleryDevices(manufacturer=manufacturer,
-                          device_category=device_category)
+        GetGalleryDevices()
     )
 
     builder.adjust(2)
@@ -140,7 +127,7 @@ def get_name_information_picture_devices_keyboard(manufacturer: str,
     return builder.as_markup()
 
 
-def for_gallery_devices(selected_devices: str, device_category: str, manufacturer: str):
+def for_gallery_devices(selected_devices: str):
 
     line_one = InlineKeyboardBuilder()
     line_two = InlineKeyboardBuilder()
@@ -150,8 +137,6 @@ def for_gallery_devices(selected_devices: str, device_category: str, manufacture
         callback_data=
         ActionGalleryDevices(turn='left',
                              pin_message='',
-                             manufacturer=manufacturer,
-                             device_category=device_category,
                              see_name_device=selected_devices)
     )
 
@@ -160,8 +145,6 @@ def for_gallery_devices(selected_devices: str, device_category: str, manufacture
         callback_data=
         ActionGalleryDevices(turn='',
                              pin_message='pin it',
-                             manufacturer=manufacturer,
-                             device_category=device_category,
                              see_name_device=selected_devices)
     )
 
@@ -170,8 +153,6 @@ def for_gallery_devices(selected_devices: str, device_category: str, manufacture
         callback_data=
         ActionGalleryDevices(turn='right',
                              pin_message='',
-                             manufacturer=manufacturer,
-                             device_category=device_category,
                              see_name_device=selected_devices)
     )
     line_one.adjust(3)

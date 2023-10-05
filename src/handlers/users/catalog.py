@@ -68,10 +68,11 @@ async def back_get_device_category(callback: CallbackQuery,
 
 
 @router_for_catalog.callback_query(ForDeleteMesage.filter())
-async def delete_mesage(message: types.Message):
+async def delete_mesage(message: types.Message, state: FSMContext):
     chat_id = message.message.chat.id
     message_id = message.message.message_id
 
+    await state.clear()
     await bot.delete_message(chat_id=chat_id, message_id=message_id)
 
 
@@ -80,6 +81,7 @@ async def delete_mesage(message: types.Message):
 @router_for_catalog.callback_query(SelectDeviceCategory.filter())
 async def get_manufacturers(callback: CallbackQuery,
                             callback_data: SelectDeviceCategory,
+                            state: FSMContext,
                             manufacturers: list):
     manufacturers.sort()
 
@@ -87,10 +89,12 @@ async def get_manufacturers(callback: CallbackQuery,
     message_id = callback.message.message_id
     device_category = callback_data.device_category
 
+    await state.update_data({'device_category': device_category})
+
     text_available_in_stock: str = 'Выберите производителя устройства: \n'
     text_out_of_stock: str = 'На данный момент устройств этой категории нет на складе'
 
-    search_callback_one: str = 'back_get_devices_picture_information_name'
+    search_callback_one: str = 'back_devices_name_and_picture'
 
     if not search_callback_one in callback.data:
 
@@ -105,7 +109,6 @@ async def get_manufacturers(callback: CallbackQuery,
                 'chat_id': chat_id,
                 'message_id': message_id,
                 'reply_markup': get_manufacturers_keyboard(
-                    device_category=device_category,
                     names_for_buttons=manufacturers)
             }
             await bot.edit_message_text(**args_for_edit_message_text)
@@ -117,7 +120,6 @@ async def get_manufacturers(callback: CallbackQuery,
             'text': text_available_in_stock,
             'chat_id': chat_id,
             'reply_markup': get_manufacturers_keyboard(
-                device_category=device_category,
                 names_for_buttons=manufacturers)
         }
         await bot.send_message(**args_for_send_message)
@@ -128,16 +130,15 @@ async def get_name_devices(callback: CallbackQuery,
                            callback_data: SelectManufacturers,
                            names_devices: list,
                            state: FSMContext):
-
-    await state.update_data({'fer_delete': 'needs be deleted this message'})
-
     names_devices.sort()
-
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
+
+    manufacturer = callback_data.manufacturer
+    await state.update_data({'manufacturer': manufacturer,
+                             'mark_for_delete': 'needs be deleted this message'})
+    for_device_category: dict = await state.get_data()
 
     text: str = 'Выберите модель устройства: \n'
 
@@ -146,8 +147,7 @@ async def get_name_devices(callback: CallbackQuery,
         'chat_id': chat_id,
         'message_id': message_id,
         'reply_markup': get_name_devices_keyboard(
-            manufacturer=manufacturer,
-            device_category=device_category,
+            device_category=for_device_category['device_category'],
             names_for_buttons=names_devices)
     }
     await bot.edit_message_text(**args_for_edit_message_text)
@@ -155,21 +155,22 @@ async def get_name_devices(callback: CallbackQuery,
 
 @router_for_catalog.callback_query(SelectNameDevices.filter())
 async def get_name_information_picture_devices(callback: CallbackQuery,
-                                               callback_data: SelectNameDevices,
                                                names_devices, devices,
                                                state: FSMContext):
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
+    names_devices.sort()
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
-    data_from_previous_message = await state.get_data()
-    search_data_from_previous_message: str = 'needs be deleted this message'
+    for_delete_message_and_device_category: dict = await state.get_data()
+    value_where_looking = for_delete_message_and_device_category.get('mark_for_delete')
+    search_for_delete_message: str = 'needs be deleted this message'
 
-    if search_data_from_previous_message in data_from_previous_message.values():
+    if value_where_looking is not None and \
+            search_for_delete_message in value_where_looking:
+
         await bot.delete_message(chat_id=chat_id, message_id=message_id)
-        await state.clear()
+        await state.update_data({'mark_for_delete': ''})
 
     photo = FSInputFile(path=devices[0][7])
 
@@ -182,15 +183,14 @@ async def get_name_information_picture_devices(callback: CallbackQuery,
             'Количество: ' + str(one_device[6]) + '\n\n'
 
     text: str = \
-        f'Модель устройства: {hbold(names_devices[0])}\n\n' + 'Характеристики и цена:\n'
+        f'Модель устройства: {hbold(devices[0][3])}\n\n' + 'Характеристики и цена:\n'
 
     args_for_send_photo = {
         'photo': photo,
         'caption': (text + inform_about_name_device),
         'chat_id': chat_id,
         'reply_markup': get_name_information_picture_devices_keyboard(
-            manufacturer=manufacturer,
-            device_category=device_category,
+            device_category=for_delete_message_and_device_category['device_category'],
             names_for_buttons=names_devices)
     }
     await bot.send_photo(**args_for_send_photo)
@@ -198,16 +198,12 @@ async def get_name_information_picture_devices(callback: CallbackQuery,
 
 @router_for_catalog.callback_query(GetGalleryDevices.filter())
 async def get_gallery_devices(callback: CallbackQuery,
-                              callback_data: GetGalleryDevices,
                               device_for_start_gallery: list,
                               number_pages: int,
                               state: FSMContext):
 
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
-
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
 
     start_name_device: str = device_for_start_gallery[0][3]
 
@@ -229,10 +225,12 @@ async def get_gallery_devices(callback: CallbackQuery,
                                                        number_str=1,
                                                        all_str=number_pages)
 
-    data_from_previous_message = await state.get_data()
-    search_data_from_previous_message: str = 'needs be deleted this message'
+    for_delete_message: dict = await state.get_data()
+    value_where_looking = for_delete_message.get('mark_for_delete')
+    search_for_delete_message: str = 'needs be deleted this message'
 
-    if not search_data_from_previous_message in data_from_previous_message.values():
+    if value_where_looking is not None \
+            and not search_for_delete_message in value_where_looking:
 
         args_for_edit_message_media = {
             'media': InputMediaPhoto(media=photo,
@@ -240,29 +238,21 @@ async def get_gallery_devices(callback: CallbackQuery,
                                      (text + inform_about_name_device)),
             'chat_id': chat_id,
             'message_id': message_id,
-            'reply_markup': for_gallery_devices(manufacturer=
-                                                manufacturer,
-                                                device_category=
-                                                device_category,
-                                                selected_devices=
+            'reply_markup': for_gallery_devices(selected_devices=
                                                 start_name_device)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
     else:
-        await state.clear()
         await bot.delete_message(chat_id=chat_id, message_id=message_id)
+        await state.update_data({'mark_for_delete': ''})
 
         args_for_send_photo = {
             'photo': photo,
             'caption': (text + inform_about_name_device),
             'chat_id': chat_id,
-            'reply_markup': for_gallery_devices(manufacturer=
-                                                manufacturer,
-                                                selected_devices=
-                                                start_name_device,
-                                                device_category=
-                                                device_category)
+            'reply_markup': for_gallery_devices(selected_devices=
+                                                start_name_device)
         }
         await bot.send_photo(**args_for_send_photo)
 
@@ -275,8 +265,6 @@ async def action_right_gallery_devices(callback: CallbackQuery,
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
 
     names_devices = list()
@@ -327,9 +315,8 @@ async def action_right_gallery_devices(callback: CallbackQuery,
                                      (text + inform_about_name_device)),
             'chat_id': chat_id,
             'message_id': message_id,
-            'reply_markup': for_gallery_devices(selected_devices=new_name_device,
-                                                manufacturer=manufacturer,
-                                                device_category=device_category)
+            'reply_markup': for_gallery_devices(selected_devices=
+                                                new_name_device)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
@@ -342,8 +329,6 @@ async def action_left_gallery_devices(callback: CallbackQuery,
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
 
     names_devices = list()
@@ -394,9 +379,7 @@ async def action_left_gallery_devices(callback: CallbackQuery,
                                      (text + inform_about_name_device)),
             'chat_id': chat_id,
             'message_id': message_id,
-            'reply_markup': for_gallery_devices(selected_devices=new_name_device,
-                                                manufacturer=manufacturer,
-                                                device_category=device_category)
+            'reply_markup': for_gallery_devices(selected_devices=new_name_device)
         }
         await bot.edit_message_media(**args_for_edit_message_media)
 
@@ -408,8 +391,6 @@ async def pin_gallery_devices(callback: CallbackQuery,
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
-    manufacturer = callback_data.manufacturer
-    device_category = callback_data.device_category
     see_name_device = callback_data.see_name_device
 
     names_devices = list()
@@ -459,11 +440,7 @@ async def pin_gallery_devices(callback: CallbackQuery,
         'photo': photo,
         'caption': (text + inform_about_name_device),
         'chat_id': chat_id,
-        'reply_markup': for_gallery_devices(manufacturer=
-                                            manufacturer,
-                                            selected_devices=
-                                            see_name_device,
-                                            device_category=
-                                            device_category)
+        'reply_markup': for_gallery_devices(selected_devices=
+                                            see_name_device)
     }
     await bot.send_photo(**args_for_send_photo)

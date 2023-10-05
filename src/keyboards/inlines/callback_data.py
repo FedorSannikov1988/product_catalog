@@ -12,13 +12,13 @@ class BackGetManufacturers(CallbackData,
 
 
 class BackGetNameDevices(CallbackData,
-                         prefix="back_get_devices_name"):
+                         prefix="back_name_devices"):
     device_category: str
 
 
 class BackGetNameInformationPictureDevices(CallbackData,
                                            prefix=
-                                           "back_get_devices_picture_information_name"):
+                                           "back_devices_name_and_picture"):
     device_category: str
 
 
@@ -29,14 +29,11 @@ class SelectDeviceCategory(CallbackData,
 
 class SelectManufacturers(CallbackData,
                           prefix="manufacturers"):
-    device_category: str
     manufacturer: str
 
 
 class SelectNameDevices(CallbackData,
-                        prefix="name_devices"):
-    device_category: str
-    manufacturer: str
+                        prefix="name_device"):
     name_device: str
 
 
@@ -47,14 +44,11 @@ class BackGetManufacturersFromGalleryDevices(CallbackData,
 
 class GetGalleryDevices(CallbackData,
                         prefix="start_gallery_devices"):
-    device_category: str
-    manufacturer: str
+    pass
 
 
 class ActionGalleryDevices(CallbackData,
                            prefix="action_gallery_devices"):
     turn: str
-    manufacturer: str
-    device_category: str
-    see_name_device: str
     pin_message: str
+    see_name_device: str
