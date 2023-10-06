@@ -91,7 +91,7 @@ async def get_manufacturers(callback: CallbackQuery,
 
     await state.update_data({'device_category': device_category})
 
-    text_available_in_stock: str = 'Выберите производителя устройства: \n'
+    text_available_in_stock: str = f"{hbold(device_category)} \n" + 'Выберите производителя устройства: \n'
     text_out_of_stock: str = 'На данный момент устройств этой категории нет на складе'
 
     search_callback_one: str = 'back_devices_name_and_picture'
@@ -140,7 +140,10 @@ async def get_name_devices(callback: CallbackQuery,
                              'mark_for_delete': 'needs be deleted this message'})
     for_device_category: dict = await state.get_data()
 
-    text: str = 'Выберите модель устройства: \n'
+    text: str = \
+        f"{hbold(for_device_category['device_category'])} → " \
+        f"{hbold(manufacturer)} \n" + \
+        "Выберите модель устройства: \n"
 
     args_for_edit_message_text = {
         'text': text,
@@ -179,8 +182,8 @@ async def get_name_information_picture_devices(callback: CallbackQuery,
     for one_device in devices:
         inform_about_name_device += \
             '\n' + one_device[4] + '\n' + \
-            'Цена: ' + str(one_device[5]) + '\n' + \
-            'Количество: ' + str(one_device[6]) + '\n\n'
+            f'{hbold("Цена:")} ' + str(int(one_device[5])) + ' ₽\n' + \
+            f'{hbold("Количество:")} ' + str(one_device[6]) + ' штук \n\n'
 
     text: str = \
         f'Модель устройства: {hbold(devices[0][3])}\n\n' + 'Характеристики и цена:\n'
@@ -217,8 +220,8 @@ async def get_gallery_devices(callback: CallbackQuery,
     for one_device in device_for_start_gallery:
         inform_about_name_device += \
             '\n' + one_device[4] + '\n' + \
-            'Цена: ' + str(one_device[5]) + '\n' + \
-            'Количество: ' + str(one_device[6]) + '\n\n'
+            f'{hbold("Цена:")} ' + str(int(one_device[5])) + ' ₽\n' + \
+            f'{hbold("Количество:")} ' + str(one_device[6]) + ' штук \n\n'
 
     inform_about_name_device += \
         '{word_str:>40} {number_str}/{all_str}'.format(word_str='страниц',
@@ -301,8 +304,8 @@ async def action_right_gallery_devices(callback: CallbackQuery,
         for one_device in choose_device:
             inform_about_name_device += \
                 '\n' + one_device[4] + '\n' + \
-                'Цена: ' + str(one_device[5]) + '\n' + \
-                'Количество: ' + str(one_device[6]) + '\n\n'
+                f'{hbold("Цена:")} ' + str(int(one_device[5])) + ' ₽\n' + \
+                f'{hbold("Количество:")} ' + str(one_device[6]) + ' штук \n\n'
 
         inform_about_name_device += \
             '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
@@ -365,8 +368,8 @@ async def action_left_gallery_devices(callback: CallbackQuery,
         for one_device in choose_device:
             inform_about_name_device += \
                 '\n' + one_device[4] + '\n' + \
-                'Цена: ' + str(one_device[5]) + '\n' + \
-                'Количество: ' + str(one_device[6]) + '\n\n'
+                f'{hbold("Цена:")} ' + str(int(one_device[5])) + ' ₽\n' + \
+                f'{hbold("Количество:")} ' + str(one_device[6]) + ' штук \n\n'
 
         inform_about_name_device += \
             '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
@@ -422,8 +425,8 @@ async def pin_gallery_devices(callback: CallbackQuery,
         inform_about_name_device += \
             '\n' + \
             'Характеристики:\n' + one_device[4] + '\n' + \
-            'Цена: ' + str(one_device[5]) + '\n' + \
-            'Количество: ' + str(one_device[6]) + '\n\n'
+            f'{hbold("Цена:")} ' + str(int(one_device[5])) + ' ₽\n' + \
+            f'{hbold("Количество:")} ' + str(one_device[6]) + ' штук \n\n'
 
     inform_about_name_device += \
         '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',
