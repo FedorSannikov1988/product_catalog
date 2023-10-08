@@ -1,40 +1,77 @@
-### Пет-проект по созданию интернет магазина на базе телеграмм бота.
+### Пет-проект по созданию интернет магазина на базе телеграмм бота (Telegram API).
 
 ### Цель:
-Cоздать и оформить интернет магазин на базе телеграм бота копирующего 
+Создать и оформить интернет магазин на базе телеграм-бота копирующего 
 возможности реального интернет магазина по продаже электроники и 
 бытовой техники: @store_mitech_bot;
+<br>
+В качестве образца был выбран @store_mitech_bot так он обладает наиболее
+полными (интересным) с точки зрения воплощения каталогом товаров.
 
 ### Технологии и инструменты:
 - Язык программирования: Python версии 3.10; 
 - СУБД: SQLite в асинхронном режиме (библиотека aiosqlite);
 - Инструменты разработки: IDE PyCharm .
-- Взаимодействие с Telegram API: aiogram 2.25.1 
+- Взаимодействие с Telegram API: aiogram 3.0.0
 - Версионный контроль: Git.
 
-### Пример работы:
+<details><summary><strong>Структура базы данных (одна картинка):</strong></summary>
 
-<details><summary><b>Скриншоты:</b></summary>
+![database_structure](/pictures/database_structure.jpg "database_structure") 
 
-![catalog](/pictures/p1.jpg "catalog") 
+</details>
 
-![shopping](/pictures/p2.jpg "shopping")
+<details><summary><strong>Пример работы (картинки):</strong></summary>
 
-![cart](/pictures/p3.jpg "cart") 
+#### Начало работы:
+
+![start1](/pictures/bot_start_1.jpg "start1") 
+
+#### Команда /start:
+
+![start2](/pictures/bot_start_2.jpg "start2")
+
+#### Команда /help:
+
+![help](/pictures/bot_help.jpg "help") 
+
+#### Выбор категории устройства (команда /catalog):
+
+![catalog_categories](/pictures/bot_catalog_categories.jpg "catalog_categories")
+
+#### Выбор производителя устройства:
+
+![catalog_manufacturer](/pictures/bot_catalog_manufacturer.jpg "catalog_manufacturer")
+
+#### Выбор по названию/модели устройства:
+
+![catalog_name_devices](/pictures/bot_catalog_name_device.jpg "catalog_name_devices")
+
+#### Вывод информации о выбранном устройстве вариант №1 (без прокрутки):
+
+![catalog_name_device_and_picture](/pictures/bot_catalog_name_device_and_picture.jpg "catalog_name_device_and_picture")
+
+#### Вывод информации о выбранном устройстве (нажата кнопка "Все устройства" в предыдущем меню) вариант №2 (с прокруткой):
+
+![catalog_all_device](/pictures/bot_catalog_all_device.jpg "catalog_all_device")
 
 </details>
 
 ### Запуск:
 
-1. Скачать файл базы данных и медиа файлы по ссылке: 
-"?????????????" и поместить в: 
-"директорию размещения проекта/telegram_bot/src/db_api/database
+1. Скачать архив с файлом базы данных и медиа файлами можно по ссылке:
+<a href="https://disk.yandex.ru/d/EAYgSwzjhibbJA"> базы данных и медиа файлы (картинки) </a>
+и разместить: "директорию размещения проекта/product_catalog/src/db_api/database
 (папка из скаченного архива)".
+<br>
+Так же для создания или работы с базой данных можно использовать SQL-script расположенный: 
+"директория размещения проекта/product_catalog/src/db_api/database/for_create_shop_database.sql".
+Одна при создании базы данных таким образом необходимо учитывать отсутствие медиа файлов.
 
 2. Создать файл .env (использутся для хранения переменных окружения 
 в проекте) в дирректории telegram_bot: "директория размещения 
-проекта/telegram_bot/.env" после чего указать в нем токен для телеграм 
-бота в переменной TOKEN_FOR_BOT (следующим образом TOKEN_FOR_BOT=).
+проекта/telegram_bot/.env" после чего указать в нем токен для телеграм-бота 
+в переменной TOKEN_FOR_BOT (следующим образом TOKEN_FOR_BOT=).
 
 3. Установить все зависимости/библиотеки указанные в requirements.txt 
 
