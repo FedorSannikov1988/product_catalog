@@ -51,4 +51,4 @@ class ActionGalleryDevices(CallbackData,
                            prefix="action_gallery_devices"):
     turn: str
     pin_message: str
-    see_name_device: str
+    index_see_name_device: int

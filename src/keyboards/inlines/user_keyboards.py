@@ -127,7 +127,7 @@ def get_name_information_picture_devices_keyboard(device_category: str,
     return builder.as_markup()
 
 
-def for_gallery_devices(selected_devices: str):
+def for_gallery_devices(index_selected_devices: int):
 
     line_one = InlineKeyboardBuilder()
     line_two = InlineKeyboardBuilder()
@@ -137,7 +137,8 @@ def for_gallery_devices(selected_devices: str):
         callback_data=
         ActionGalleryDevices(turn='left',
                              pin_message='',
-                             see_name_device=selected_devices)
+                             index_see_name_device=
+                             index_selected_devices)
     )
 
     line_one.button(
@@ -145,7 +146,8 @@ def for_gallery_devices(selected_devices: str):
         callback_data=
         ActionGalleryDevices(turn='',
                              pin_message='pin it',
-                             see_name_device=selected_devices)
+                             index_see_name_device=
+                             index_selected_devices)
     )
 
     line_one.button(
@@ -153,7 +155,8 @@ def for_gallery_devices(selected_devices: str):
         callback_data=
         ActionGalleryDevices(turn='right',
                              pin_message='',
-                             see_name_device=selected_devices)
+                             index_see_name_device=
+                             index_selected_devices)
     )
     line_one.adjust(3)
 
