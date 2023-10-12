@@ -1,10 +1,9 @@
 """
 Starting (getting started) with a telegram bot.
 """
+from loader import router_for_start_action, all_answer_for_user
 from aiogram.utils.markdown import hunderline, hlink, hbold
 from aiogram.fsm.context import FSMContext
-from loader import router_for_start_action
-from answers import all_answer_for_user
 from aiogram.filters import Command
 from aiogram import types
 

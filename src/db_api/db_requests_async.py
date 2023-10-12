@@ -1,3 +1,6 @@
+"""
+To work with the database in asynchronous mode.
+"""
 import aiosqlite
 from pathlib import Path
 
@@ -21,6 +24,12 @@ class Database_async:
             return data
 
     async def create_table_device_category(self):
+        """
+        Create table Device_category in
+        data database app/bot
+
+        :return: None
+        """
         sql = """
         CREATE TABLE IF NOT EXISTS Device_category
         (
@@ -31,6 +40,12 @@ class Database_async:
         await self.execute(sql=sql, commit=True)
 
     async def create_table_manufacturer(self):
+        """
+        Create table Manufacturer in
+        data database app/bot
+
+        :return: None
+        """
         sql = """
         CREATE TABLE IF NOT EXISTS Manufacturer
         (
@@ -41,6 +56,12 @@ class Database_async:
         await self.execute(sql=sql, commit=True)
 
     async def create_table_devices(self):
+        """
+        Create table Devices in
+        data database app/bot
+
+        :return: None
+        """
         sql = """
         CREATE TABLE IF NOT EXISTS Devices
         (
@@ -60,11 +81,23 @@ class Database_async:
         """
         await self.execute(sql=sql, commit=True)
 
-    async def info_all_device_category(self) -> int:
+    async def info_all_device_category(self):
+        """
+        Loads all device categories from the database.
+
+        :return: list[tuple]
+        """
         sql = 'SELECT * FROM Device_category'
         return await self.execute(sql, fetchall=True)
 
     async def info_about_devices(self, **kwargs):
+        """
+        Loads information about devices with the
+        specified parameters.
+
+        :param kwargs:
+        :return: list[tuple]
+        """
         sql = 'SELECT * FROM Devices WHERE '
         sql, parameters = self.format_args(sql, kwargs)
         return await self.execute(sql, parameters, fetchall=True)

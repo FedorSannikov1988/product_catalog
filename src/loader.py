@@ -1,3 +1,11 @@
+"""
+To download all the necessary data to
+start the application /telegram bot
+"""
+from answers.users.download_answers import load_answer_for_user, \
+                                           path_for_urls, \
+                                           path_for_button_names, \
+                                           path_for_users_answers
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Dispatcher, Router, Bot, F
 from aiogram.enums import ParseMode
@@ -7,6 +15,7 @@ from loguru import logger
 from pathlib import Path
 import aiosqlite
 import asyncio
+
 
 bot = Bot(token=TOKEN_BOT, parse_mode=ParseMode.HTML)
 dp = Dispatcher(storage=MemoryStorage())
@@ -28,8 +37,16 @@ logger.add('logs/logs.json',
            serialize=True)
 
 
-async def create_needs_tables():
-    await db.create_table_device_category()
+all_urls: dict = load_answer_for_user(path_for_file=
+                                      path_for_urls)
+button_names: dict = load_answer_for_user(path_for_file=
+                                          path_for_button_names)
+all_answer_for_user: dict = load_answer_for_user(path_for_file=
+                                                 path_for_users_answers)
+#оставил для себя как напоминание что можно
+#по другому запускать цикл событий
+#async def create_needs_tables():
+#    await db.create_table_device_category()
 
 try:
     loop = asyncio.get_event_loop()
