@@ -14,7 +14,12 @@ from loader import bot, dp
 import asyncio
 
 
-async def main():
+async def main() -> None:
+    """
+    launching the application .
+
+    :return: None
+    """
 
     router_for_catalog.message.middleware(GetDeviceCategoryStart())
     router_for_catalog.callback_query.middleware(GetDeviceCategoryBack())
