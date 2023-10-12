@@ -1,3 +1,6 @@
+"""
+Responsible for displaying the product catalog.
+"""
 from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 from loader import router_for_catalog, bot
 from aiogram.fsm.context import FSMContext
@@ -12,7 +15,7 @@ from keyboards import get_name_information_picture_devices_keyboard, \
                       SelectDeviceCategory, \
                       SelectManufacturers, \
                       SelectNameDevices, \
-                      ForDeleteMesage, \
+                      ForDeleteMessage, \
                       BackGetNameDevices, \
                       BackGetManufacturers, \
                       BackGetNameInformationPictureDevices, \
@@ -24,6 +27,13 @@ from keyboards import get_name_information_picture_devices_keyboard, \
 @router_for_catalog.message(Command("catalog"))
 async def get_device_category(message: types.Message,
                               all_device_category: list):
+    """
+    Launching the product catalog .
+
+    :param message: types.Message
+    :param all_device_category: list
+    :return: None
+    """
     text: str = 'Выберите категорию устройства: \n'
 
     args_for_answer = {
@@ -38,6 +48,13 @@ async def get_device_category(message: types.Message,
 @router_for_catalog.callback_query(BackGetManufacturers.filter())
 async def back_get_device_category(callback: CallbackQuery,
                                    all_device_category: list):
+    """
+    Return to the device category selection .
+
+    :param callback: CallbackQuery
+    :param all_device_category: list
+    :return: None
+    """
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -68,8 +85,17 @@ async def back_get_device_category(callback: CallbackQuery,
         await bot.send_message(**args_for_send_message)
 
 
-@router_for_catalog.callback_query(ForDeleteMesage.filter())
+@router_for_catalog.callback_query(ForDeleteMessage.filter())
 async def delete_mesage(message: types.Message, state: FSMContext):
+    """
+    To delete messages and reset the state variable
+    (stores FSMContext) when the "Finish" button
+    is clicked.
+
+    :param message: types.Message
+    :param state: FSMContext
+    :return: None
+    """
     chat_id = message.message.chat.id
     message_id = message.message.message_id
 
@@ -84,6 +110,15 @@ async def get_manufacturers(callback: CallbackQuery,
                             callback_data: SelectDeviceCategory,
                             state: FSMContext,
                             manufacturers: list):
+    """
+    To select the device manufacturer.
+
+    :param callback: CallbackQuery
+    :param callback_data: SelectDeviceCategory
+    :param state: FSMContext
+    :param manufacturers: list
+    :return: None
+    """
     manufacturers.sort()
 
     chat_id = callback.message.chat.id
@@ -135,6 +170,16 @@ async def get_name_devices(callback: CallbackQuery,
                            callback_data: SelectManufacturers,
                            names_devices: list,
                            state: FSMContext):
+    """
+    Selection of the device by name (the choice of
+    category and manufacturer was made earlier).
+
+    :param callback: CallbackQuery
+    :param callback_data: SelectManufacturers
+    :param names_devices: list
+    :param state: FSMContext
+    :return: None
+    """
     names_devices.sort()
 
     chat_id = callback.message.chat.id
@@ -164,8 +209,19 @@ async def get_name_devices(callback: CallbackQuery,
 
 @router_for_catalog.callback_query(SelectNameDevices.filter())
 async def get_name_information_picture_devices(callback: CallbackQuery,
-                                               names_devices, devices,
+                                               names_devices: list,
+                                               devices: list,
                                                state: FSMContext):
+    """
+    Displays information about the selected
+    model and a picture of the device .
+
+    :param callback: CallbackQuery
+    :param names_devices: list
+    :param devices: list
+    :param state: FSMContext
+    :return: None
+    """
     names_devices.sort()
 
     chat_id = callback.message.chat.id
@@ -204,6 +260,17 @@ async def get_gallery_devices(callback: CallbackQuery,
                               device_for_start_gallery: list,
                               number_pages: int,
                               state: FSMContext):
+    """
+    Output of the gallery of products (picture and information
+    about the product of the selected category and manufacturer)
+    with the ability to scroll.
+
+    :param callback: CallbackQuery
+    :param device_for_start_gallery: list
+    :param number_pages: int
+    :param state: FSMContext
+    :return: None
+    """
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -255,6 +322,14 @@ async def get_gallery_devices(callback: CallbackQuery,
 async def action_right_gallery_devices(callback: CallbackQuery,
                                        callback_data: ActionGalleryDevices,
                                        devices_for_action: list):
+    """
+    Scroll the product gallery to the right (if the number of sheets allows).
+
+    :param callback: CallbackQuery
+    :param callback_data: ActionGalleryDevices
+    :param devices_for_action: list
+    :return: None
+    """
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -309,6 +384,14 @@ async def action_right_gallery_devices(callback: CallbackQuery,
 async def action_left_gallery_devices(callback: CallbackQuery,
                                       callback_data: ActionGalleryDevices,
                                       devices_for_action: list):
+    """
+    Scroll the product gallery to the left (if the number of sheets allows).
+
+    :param callback: CallbackQuery
+    :param callback_data: ActionGalleryDevices
+    :param devices_for_action: list
+    :return: None
+    """
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -362,7 +445,15 @@ async def action_left_gallery_devices(callback: CallbackQuery,
 @router_for_catalog.callback_query(ActionGalleryDevices.filter(F.pin_message == 'pin it'))
 async def pin_gallery_devices(callback: CallbackQuery,
                               callback_data: ActionGalleryDevices,
-                              devices_for_action):
+                              devices_for_action: list):
+    """
+    Fixing the product you like.
+
+    :param callback: CallbackQuery
+    :param callback_data: ActionGalleryDevices
+    :param devices_for_action: list
+    :return: None
+    """
     chat_id = callback.message.chat.id
     message_id = callback.message.message_id
 
@@ -413,7 +504,12 @@ async def pin_gallery_devices(callback: CallbackQuery,
 
 
 def for_print_inform(devices: list):
+    """
+    To generate output information about the product.
 
+    :param devices: list
+    :return: str
+    """
     inform_about_name_device: str = ''
 
     for one_device in devices:
@@ -427,7 +523,14 @@ def for_print_inform(devices: list):
 
 
 def for_page_numbering(all_str: int,
-                       number_str: int = 0):
+                       number_str: int):
+    """
+    To display the page number in the product galleries.
+
+    :param all_str: int
+    :param number_str: int
+    :return: str
+    """
 
     page_numbering = \
         '{word_str:>40} {number_str}/{all_str}'.format(word_str='страница',

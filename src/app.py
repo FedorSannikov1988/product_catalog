@@ -1,3 +1,6 @@
+"""
+Start app/bot
+"""
 from middlewares import GetDeviceCategoryStart, \
                         GetDeviceManufacturer, \
                         GetDeviceCategoryBack, \

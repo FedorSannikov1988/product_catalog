@@ -1,3 +1,6 @@
+"""
+Starting (getting started) with a telegram bot.
+"""
 from aiogram.utils.markdown import hunderline, hlink, hbold
 from aiogram.fsm.context import FSMContext
 from loader import router_for_start_action
@@ -9,6 +12,13 @@ from aiogram import types
 @router_for_start_action.message(Command("start"))
 async def start_work_bot(message: types.Message,
                          state: FSMContext):
+    """
+    Response to the start command.
+
+    :param message: types.Message
+    :param state: FSMContext
+    :return: None
+    """
     await state.clear()
 
     text: str = f'Здраствуйте, ' \
@@ -30,6 +40,13 @@ async def start_work_bot(message: types.Message,
 
 @router_for_start_action.message(Command("help"))
 async def give_all_commands_for_users(message: types.Message):
+    """
+    Response to the help command .
+    Displays a list of all commands .
+
+    :param message: types.Message
+    :return: None
+    """
     text: str = ''
     for command, description in \
             all_answer_for_user['all_commands_for_users'].items():

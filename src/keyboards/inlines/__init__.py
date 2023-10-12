@@ -10,6 +10,6 @@ from .user_keyboards import get_name_information_picture_devices_keyboard, \
                             SelectDeviceCategory, \
                             SelectManufacturers, \
                             SelectNameDevices, \
-                            ForDeleteMesage, \
+                            ForDeleteMessage, \
                             GetGalleryDevices, \
                             ActionGalleryDevices
